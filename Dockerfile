@@ -1,29 +1,22 @@
-# 軽量なPython 3.10 (slim) イメージを使用
-# full imageよりサイズが小さく、ビルドも早いです
+# 軽量版のPython 3.10を使用
 FROM python:3.10-slim
 
-# ログがバッファリングされずにすぐに表示されるように設定
-# (これがないとNorthflankのログ画面で出力が遅延します)
+# ログを即座に出力させる設定（Northflankで重要）
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
 
-# 作業ディレクトリを作成
+# 作業フォルダ設定
 WORKDIR /app
 
-# セキュリティ対策: rootユーザーではなく一般ユーザーを作成して使用する
-RUN useradd -m -u 1000 botuser
-
-# 依存関係ファイルを先にコピー（キャッシュ効率化のため）
+# 依存ファイルを先にコピーしてインストール（ビルド高速化）
 COPY requirements.txt .
-
-# 依存ライブラリのインストール
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ソースコードをコピー
+# 残りのコードをコピー
 COPY . .
 
-# ユーザーを切り替え
+# 一般ユーザーを作成して実行（セキュリティ対策）
+RUN useradd -m botuser
 USER botuser
 
-# ボットを実行 (ファイル名が違う場合は main.py を書き換えてください)
+# ボット起動
 CMD ["python", "main.py"]
