@@ -39,6 +39,14 @@ async def change_status():
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print(f"ステータスを '{next_status}' に変更しました。")
 
-# ボットを実行（"YOUR_BOT_TOKEN" の部分を実際のトークンに置き換えてください）
-# 環境変数などからトークンを読み込むのがセキュリティ上推奨されます
-bot.run("YOUR_BOT_TOKEN")
+import os
+
+# ... (上のコードは同じ) ...
+
+# 環境変数 'DISCORD_TOKEN' からトークンを取得
+token = os.getenv("DISCORD_TOKEN")
+
+if token:
+    bot.run(token)
+else:
+    print("エラー: 環境変数 DISCORD_TOKEN が設定されていません。")
